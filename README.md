@@ -1,4 +1,4 @@
-# 🤖 JoJo - AsisTECH: Sistema de Control de Robots Asistenciales
+# 🤖 JoJo - AsisTECH: Sistema de Control de Robot Asistente
 
 > Aplicación web Flask para control y gestión de robots asistenciales para adultos mayores
 
