@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}Mapeado{% endblock %}
+
+{% block head_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        .map-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 20px;
+        }
+        
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .map-header h2 {
+            color: #062F4F;
+            font-size: 28px;
+        }
+        
+        .map-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .map-btn {
+            background: #062F4F;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .map-btn:hover {
+            background: #0a4d7a;
+            transform: translateY(-2px);
+        }
+        
+        .map-canvas {
+            width: 100%;
+            height: 500px;
+            background: #f5f5f5;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-placeholder {
+            text-align: center;
+            color: #666;
+        }
+        
+        .map-placeholder i {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #062F4F;
+        }
+        
+        .robot-position {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #062F4F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        
+        .map-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+        }
+        
+        .stat-card h4 {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .stat-card p {
+            margin: 10px 0 0 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <a href="{{ url_for('dashboard.index') }}" class="back-button" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; margin: 20px;">
+        <i class="fa-solid fa-arrow-left"></i> Volver al Apartado Principal
+    </a>
+    <div class="map-container">
+        <div class="map-header">
+            <h2><i class="fa-solid fa-map-location-dot"></i> Mapeado del Entorno</h2>
+            <div class="map-controls">
+                <button class="map-btn" id="startMappingBtn">
+                    <i class="fa-solid fa-play"></i> Iniciar Mapeo
+                </button>
+                <button class="map-btn" id="clearMapBtn">
+                    <i class="fa-solid fa-eraser"></i> Limpiar
+                </button>
+            </div>
+        </div>
+        
+        <div class="map-canvas" id="mapCanvas">
+            <div class="map-placeholder">
+                <i class="fa-solid fa-robot"></i>
+                <h3>Mapa del Hogar</h3>
+                <p>Presiona "Iniciar Mapeo" para que el robot comience a explorar el entorno</p>
+            </div>
+            <!-- El robot aparecerá aquí dinámicamente -->
+        </div>
+        
+        <div class="map-stats">
+            <div class="stat-card">
+                <h4>Área Mapeada</h4>
+                <p id="areaMapped">0 m²</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <h4>Obstáculos Detectados</h4>
+                <p id="obstaclesCount">0</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <h4>Distancia Recorrida</h4>
+                <p id="distanceTraveled">0 m</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                <h4>Estado</h4>
+                <p id="mappingStatus">Inactivo</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Funcionalidad básica del mapeado
+    let isMappingActive = false;
+    
+    document.getElementById('startMappingBtn').addEventListener('click', function() {
+        isMappingActive = !isMappingActive;
+        const btn = this;
+        const statusEl = document.getElementById('mappingStatus');
+        
+        if (isMappingActive) {
+            btn.innerHTML = '<i class="fa-solid fa-stop"></i> Detener Mapeo';
+            btn.style.background = '#dc3545';
+            statusEl.textContent = 'Activo';
+            
+            // Aquí se conectaría con MQTT para recibir datos del robot
+            console.log('Iniciando mapeo...');
+            
+        } else {
+            btn.innerHTML = '<i class="fa-solid fa-play"></i> Iniciar Mapeo';
+            btn.style.background = '#062F4F';
+            statusEl.textContent = 'Inactivo';
+            
+            console.log('Mapeo detenido');
+        }
+    });
+    
+    document.getElementById('clearMapBtn').addEventListener('click', function() {
+        if (confirm('¿Estás seguro de que deseas limpiar el mapa?')) {
+            document.getElementById('areaMapped').textContent = '0 m²';
+            document.getElementById('obstaclesCount').textContent = '0';
+            document.getElementById('distanceTraveled').textContent = '0 m';
+            console.log('Mapa limpiado');
+        }
+    });
+</script>
+{% endblock %}

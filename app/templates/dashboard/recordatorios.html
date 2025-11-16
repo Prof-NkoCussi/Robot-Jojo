@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+
+{% block title %}Recordatorios{% endblock %}
+
+{% block head_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        .reminders-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 20px;
+        }
+        
+        .reminders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .reminders-header h2 {
+            color: #062F4F;
+            font-size: 28px;
+        }
+        
+        .add-reminder-btn {
+            background: #062F4F;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .add-reminder-btn:hover {
+            background: #0a4d7a;
+            transform: translateY(-2px);
+        }
+        
+        .reminders-grid {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .reminder-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .reminder-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        .reminder-card.medicine {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .reminder-card.appointment {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .reminder-card.activity {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .reminder-info {
+            flex: 1;
+        }
+        
+        .reminder-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .reminder-info p {
+            margin: 5px 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .reminder-time {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 0 20px;
+        }
+        
+        .reminder-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .reminder-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .reminder-btn:hover {
+            background: rgba(255,255,255,0.4);
+            transform: scale(1.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 80px;
+            color: #062F4F;
+            margin-bottom: 20px;
+        }
+        
+        /* Modal para agregar recordatorio */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            color: #062F4F;
+            margin: 0;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .submit-btn {
+            background: #062F4F;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #0a4d7a;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <a href="{{ url_for('dashboard.index') }}" class="back-button" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; margin: 20px;">
+        <i class="fa-solid fa-arrow-left"></i> Volver al Apartado Principal
+    </a>
+    <div class="reminders-container">
+        <div class="reminders-header">
+            <h2><i class="fa-solid fa-bell"></i> Recordatorios</h2>
+            <button class="add-reminder-btn" id="addReminderBtn">
+                <i class="fa-solid fa-plus"></i> Nuevo Recordatorio
+            </button>
+        </div>
+        
+        <div class="reminders-grid" id="remindersGrid">
+            <!-- Ejemplo de recordatorios (estos se cargarán dinámicamente) -->
+            <div class="reminder-card medicine">
+                <div class="reminder-info">
+                    <h3><i class="fa-solid fa-pills"></i> Tomar Medicamento</h3>
+                    <p><i class="fa-solid fa-capsules"></i> Aspirina 100mg</p>
+                    <p><i class="fa-solid fa-calendar"></i> Todos los días</p>
+                </div>
+                <div class="reminder-time">
+                    08:00
+                </div>
+                <div class="reminder-actions">
+                    <button class="reminder-btn" title="Completado"><i class="fa-solid fa-check"></i></button>
+                    <button class="reminder-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+            
+            <div class="reminder-card appointment">
+                <div class="reminder-info">
+                    <h3><i class="fa-solid fa-user-doctor"></i> Cita Médica</h3>
+                    <p><i class="fa-solid fa-hospital"></i> Dr. González - Cardiología</p>
+                    <p><i class="fa-solid fa-calendar"></i> 20 de Noviembre, 2025</p>
+                </div>
+                <div class="reminder-time">
+                    10:30
+                </div>
+                <div class="reminder-actions">
+                    <button class="reminder-btn" title="Completado"><i class="fa-solid fa-check"></i></button>
+                    <button class="reminder-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+            
+            <div class="reminder-card activity">
+                <div class="reminder-info">
+                    <h3><i class="fa-solid fa-person-walking"></i> Ejercicio</h3>
+                    <p><i class="fa-solid fa-dumbbell"></i> Caminata de 30 minutos</p>
+                    <p><i class="fa-solid fa-calendar"></i> Lunes, Miércoles, Viernes</p>
+                </div>
+                <div class="reminder-time">
+                    17:00
+                </div>
+                <div class="reminder-actions">
+                    <button class="reminder-btn" title="Completado"><i class="fa-solid fa-check"></i></button>
+                    <button class="reminder-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal para agregar recordatorio -->
+<div class="modal" id="reminderModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Nuevo Recordatorio</h3>
+            <button class="close-modal" id="closeModal"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <form id="reminderForm">
+            <div class="form-group">
+                <label for="reminderType">Tipo de Recordatorio</label>
+                <select id="reminderType" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="medicine">Medicamento</option>
+                    <option value="appointment">Cita Médica</option>
+                    <option value="activity">Actividad</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="reminderTitle">Título</label>
+                <input type="text" id="reminderTitle" placeholder="Ej: Tomar Aspirina" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="reminderDescription">Descripción</label>
+                <textarea id="reminderDescription" placeholder="Detalles adicionales..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="reminderTime">Hora</label>
+                <input type="time" id="reminderTime" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="reminderFrequency">Frecuencia</label>
+                <select id="reminderFrequency" required>
+                    <option value="daily">Todos los días</option>
+                    <option value="weekly">Semanal</option>
+                    <option value="monthly">Mensual</option>
+                    <option value="once">Una vez</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                <i class="fa-solid fa-save"></i> Guardar Recordatorio
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Modal
+    const modal = document.getElementById('reminderModal');
+    const addBtn = document.getElementById('addReminderBtn');
+    const closeBtn = document.getElementById('closeModal');
+    
+    addBtn.addEventListener('click', () => {
+        modal.classList.add('active');
+    });
+    
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+    
+    // Formulario
+    document.getElementById('reminderForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const type = document.getElementById('reminderType').value;
+        const title = document.getElementById('reminderTitle').value;
+        const description = document.getElementById('reminderDescription').value;
+        const time = document.getElementById('reminderTime').value;
+        const frequency = document.getElementById('reminderFrequency').value;
+        
+        // Mapear frecuencia a texto legible
+        const frequencyText = {
+            'daily': 'Todos los días',
+            'weekly': 'Semanal',
+            'monthly': 'Mensual',
+            'once': 'Una vez'
+        };
+        
+        // Mapear tipo a icono y clase CSS
+        const typeConfig = {
+            'medicine': { icon: 'fa-pills', title: 'Medicamento', detailIcon: 'fa-capsules' },
+            'appointment': { icon: 'fa-user-doctor', title: 'Cita Médica', detailIcon: 'fa-hospital' },
+            'activity': { icon: 'fa-person-walking', title: 'Actividad', detailIcon: 'fa-dumbbell' }
+        };
+        
+        const config = typeConfig[type];
+        
+        // Crear el nuevo recordatorio
+        const newReminder = document.createElement('div');
+        newReminder.className = `reminder-card ${type}`;
+        newReminder.innerHTML = `
+            <div class="reminder-info">
+                <h3><i class="fa-solid ${config.icon}"></i> ${title}</h3>
+                <p><i class="fa-solid ${config.detailIcon}"></i> ${description || 'Sin descripción'}</p>
+                <p><i class="fa-solid fa-calendar"></i> ${frequencyText[frequency]}</p>
+            </div>
+            <div class="reminder-time">
+                ${time}
+            </div>
+            <div class="reminder-actions">
+                <button class="reminder-btn" title="Completado"><i class="fa-solid fa-check"></i></button>
+                <button class="reminder-btn" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+            </div>
+        `;
+        
+        // Agregar el recordatorio al grid
+        document.getElementById('remindersGrid').appendChild(newReminder);
+        
+        // Agregar eventos a los nuevos botones
+        attachReminderButtonEvents(newReminder);
+        
+        // Aquí se enviaría a la API para guardar en la base de datos
+        console.log('Nuevo recordatorio:', { type, title, description, time, frequency });
+        
+        // Cerrar modal y resetear formulario
+        modal.classList.remove('active');
+        this.reset();
+        
+        // Mostrar mensaje de éxito
+        alert('✓ Recordatorio creado exitosamente');
+    });
+    
+    // Función para agregar eventos a los botones de recordatorio
+    function attachReminderButtonEvents(card) {
+        card.querySelectorAll('.reminder-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.title === 'Completado') {
+                    this.closest('.reminder-card').style.opacity = '0.5';
+                    alert('Recordatorio marcado como completado');
+                } else if (this.title === 'Eliminar') {
+                    if (confirm('¿Eliminar este recordatorio?')) {
+                        this.closest('.reminder-card').remove();
+                    }
+                }
+            });
+        });
+    }
+    
+    // Botones de acción en recordatorios existentes
+    document.querySelectorAll('.reminder-card').forEach(card => {
+        attachReminderButtonEvents(card);
+    });
+</script>
+{% endblock %}

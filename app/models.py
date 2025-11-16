@@ -12,6 +12,13 @@ user_roles = db.Table('user_roles',
     db.Column('role_id', db.Integer, db.ForeignKey('role.id'), primary_key=True)
 )
 
+# Tabla de asociación para la relación Muchos a Muchos entre User y Robot
+user_robots = db.Table('user_robots',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('robot_id', db.Integer, db.ForeignKey('robot.id'), primary_key=True),
+    db.Column('assigned_at', db.DateTime, default=datetime.utcnow)
+)
+
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
@@ -37,8 +44,9 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=user_roles, lazy='subquery',
                             backref=db.backref('users', lazy=True))
     
-    # Relación con Robot (un usuario puede tener varios robots)
-    robots = db.relationship('Robot', backref='owner', lazy=True)
+    # Relación con Robot (un usuario puede tener acceso a varios robots)
+    robots = db.relationship('Robot', secondary=user_robots, lazy='subquery',
+                            backref=db.backref('users', lazy=True))
 
     def set_password(self, password):
         """Crea un hash de la contraseña."""
@@ -64,9 +72,6 @@ class Robot(db.Model):
     battery_level = db.Column(db.Integer, default=100)
     last_seen = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Foreign Key al usuario dueño del robot
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return f'<Robot {self.name} ({self.serial_number})>'

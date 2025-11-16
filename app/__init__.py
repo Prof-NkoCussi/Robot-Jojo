@@ -51,10 +51,11 @@ def create_app(config_class=Config):
         app.register_blueprint(api.api_bp)
 
     # 7. Registro de los Comandos CLI
-    from .commands import seed_roles_command, create_admin_command, create_robot_command
+    from .commands import seed_roles_command, create_admin_command, create_robot_command, seed_robots_command
     app.cli.add_command(seed_roles_command)
     app.cli.add_command(create_admin_command)
     app.cli.add_command(create_robot_command)
+    app.cli.add_command(seed_robots_command)
 
     # 8. Importar los modelos para que SQLAlchemy y Flask-Migrate los reconozcan
     from . import models

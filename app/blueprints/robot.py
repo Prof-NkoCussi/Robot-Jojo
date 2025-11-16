@@ -20,8 +20,8 @@ def control(robot_id):
     """Página de control de un robot específico."""
     robot = Robot.query.get_or_404(robot_id)
     
-    # Verificar que el robot pertenece al usuario actual
-    if robot.user_id != current_user.id:
+    # Verificar que el robot está en la lista de robots del usuario
+    if robot not in current_user.robots:
         flash('No tienes permiso para controlar este robot.', 'danger')
         return redirect(url_for('robot.select'))
     

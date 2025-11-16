@@ -9,10 +9,9 @@
     <nav class="sidebar-nav">
         <ul>
             <li><a href="{{ url_for('dashboard.index') }}"><span>Inicio</span><i class="fa-solid fa-arrow-right"></i></a></li>
-            <li><a href="#"><span>Mapeado</span><i class="fa-solid fa-map-location-dot"></i></a></li>
-            <li><a href="#"><span>Recordatorios</span><i class="fa-solid fa-bell"></i></a></li>
-            <li><a href="#"><span>Llamadas</span><i class="fa-solid fa-phone-volume"></i></a></li>
-            <li><a href="#"><span>Brazo</span><i class="fa-solid fa-robot"></i></a></li>
+            <li><a href="{{ url_for('dashboard.mapeado') }}"><span>Mapeado</span><i class="fa-solid fa-map-location-dot"></i></a></li>
+            <li><a href="{{ url_for('dashboard.recordatorios') }}"><span>Recordatorios</span><i class="fa-solid fa-bell"></i></a></li>
+            <li><a href="{{ url_for('robot.select') }}"><span>Mis Robots</span><i class="fa-solid fa-robot"></i></a></li>
         </ul>
     </nav>
 </aside>

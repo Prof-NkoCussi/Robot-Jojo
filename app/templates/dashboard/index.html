@@ -4,44 +4,701 @@
 
 {% block head_css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <style>
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card.online {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .stat-card.offline {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .stat-card.battery {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .stat-card h3 {
+            font-size: 16px;
+            margin: 0 0 10px 0;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-card .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .action-btn {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .robots-quick-list {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .robots-quick-list h3 {
+            color: #062F4F;
+            margin-bottom: 15px;
+        }
+        
+        .robot-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .robot-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .robot-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .robot-status.online {
+            background: #28a745;
+            box-shadow: 0 0 10px #28a745;
+        }
+        
+        .robot-status.offline {
+            background: #dc3545;
+        }
+        
+        /* Widget de Clima */
+        .weather-widget {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 20px;
+        }
+        
+        .weather-widget h3 {
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .weather-content {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .weather-main {
+            text-align: center;
+        }
+        
+        .weather-temp {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .weather-icon {
+            font-size: 4rem;
+        }
+        
+        .weather-description {
+            font-size: 1.2rem;
+            text-transform: capitalize;
+            opacity: 0.9;
+        }
+        
+        .weather-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .weather-detail-item {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .weather-detail-item i {
+            font-size: 1.5rem;
+        }
+        
+        .weather-detail-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .weather-detail-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .weather-location {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        /* Widget de Noticias */
+        .news-section {
+            margin: 20px;
+        }
+        
+        .news-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .news-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .news-refresh {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .news-refresh:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .news-container {
+            background: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .news-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-color: #f5576c;
+        }
+        
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .news-content {
+            padding: 15px;
+        }
+        
+        .news-source {
+            color: #f5576c;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .news-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #062F4F;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .news-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .news-date {
+            color: #999;
+            font-size: 0.85rem;
+        }
+        
+        .news-link {
+            color: #f5576c;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .news-link:hover {
+            text-decoration: underline;
+        }
+        
+        .news-loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        
+        .news-error {
+            text-align: center;
+            padding: 40px 20px;
+            color: #dc3545;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 <section class="dashboard-section">
+    <!-- Estadísticas de Robots -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3><i class="fa-solid fa-robot"></i> Total de Robots</h3>
+            <div class="stat-value">{{ stats.total_robots }}</div>
+            <div class="stat-label">Asistentes disponibles</div>
+        </div>
+        
+        <div class="stat-card online">
+            <h3><i class="fa-solid fa-circle-check"></i> En Línea</h3>
+            <div class="stat-value">{{ stats.robots_online }}</div>
+            <div class="stat-label">Robots activos</div>
+        </div>
+        
+        <div class="stat-card offline">
+            <h3><i class="fa-solid fa-circle-xmark"></i> Fuera de Línea</h3>
+            <div class="stat-value">{{ stats.robots_offline }}</div>
+            <div class="stat-label">Robots inactivos</div>
+        </div>
+        
+        <div class="stat-card battery">
+            <h3><i class="fa-solid fa-battery-three-quarters"></i> Batería Promedio</h3>
+            <div class="stat-value">{{ stats.avg_battery }}%</div>
+            <div class="stat-label">Nivel de carga</div>
+        </div>
+    </div>
+
     <div class="top-row">
         <div class="logo-container">
             <img src="{{ url_for('static', filename='img/LogodeAsisTECH.png') }}" alt="Logo AsisTECH">
         </div>
         <div class="actions-container">
-            <a href="{{ url_for('robot.select') }}" class="action-btn" style="text-decoration: none; color: inherit;">
+            <a href="{{ url_for('robot.select') }}" class="action-btn" style="text-decoration: none;">
                 <i class="fa-solid fa-robot"></i><p>Buscar<br>mi Asistente</p>
             </a>
-            <div class="action-btn"><i class="fa-solid fa-video"></i><p>Videollamada</p></div>
-            <div class="action-btn"><i class="fa-solid fa-house"></i><p>Hogar</p></div>
-            <div class="action-btn"><i class="fa-solid fa-phone"></i><p>Llamada</p></div>
+            <a href="{{ url_for('dashboard.mapeado') }}" class="action-btn" style="text-decoration: none;">
+                <i class="fa-solid fa-map-location-dot"></i><p>Mapeado</p>
+            </a>
+            <a href="{{ url_for('dashboard.recordatorios') }}" class="action-btn" style="text-decoration: none;">
+                <i class="fa-solid fa-bell"></i><p>Recordatorios</p>
+            </a>
+            <a href="{{ url_for('dashboard.videollamada') }}" class="action-btn" style="text-decoration: none;">
+                <i class="fa-solid fa-video"></i><p>Videollamada</p>
+            </a>
             <div class="action-btn"><i class="fa-solid fa-heart-pulse"></i><p>Estado</p></div>
         </div>
     </div>
-
-    <div class="bottom-row">
-        <div class="info-column">
-            <div class="card"><img src="{{ url_for('static', filename='img/AduMays.png') }}"><p>Aprende a cómo utilizar JoJo a su máximo potencial <a href="#" class="card-link">ver más...</a></p></div>
-            <div class="card"><img src="{{ url_for('static', filename='img/AduMays.png') }}"><p>Aprende a cómo utilizar JoJo a su máximo potencial <a href="#" class="card-link">ver más...</a></p></div>
-        </div>
-        <div class="tip-column">
-            <div class="card">
-                <div class="tip-content">
-                    <img src="{{ url_for('static', filename='img/AduMay.png') }}">
-                    <div>
-                        <h3>Sabias Qué</h3>
-                        <p>La soledad afecta profundamente a los adultos mayores, perjudicando su salud física y mental. Este sentimiento no deseado aumenta el riesgo de depresión, ansiedad y enfermedades cardiovasculares.</p>
-                    </div>
+    
+    <!-- Lista rápida de robots -->
+    <div class="robots-quick-list">
+        <h3><i class="fa-solid fa-list"></i> Mis Robots</h3>
+        {% if robots %}
+            {% for robot in robots %}
+            <div class="robot-item">
+                <div>
+                    <span class="robot-status {{ 'online' if robot.is_online else 'offline' }}"></span>
+                    <strong>{{ robot.name }}</strong>
+                    <span style="color: #666; margin-left: 10px;">{{ robot.serial_number }}</span>
+                </div>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <span style="color: #666;">
+                        <i class="fa-solid fa-battery-{{ 'full' if robot.battery_level > 75 else 'half' if robot.battery_level > 25 else 'quarter' }}"></i>
+                        {{ robot.battery_level }}%
+                    </span>
+                    <a href="{{ url_for('robot.control', robot_id=robot.id) }}" class="card-link">
+                        Controlar <i class="fa-solid fa-arrow-right"></i>
+                    </a>
                 </div>
             </div>
-            <div class="card">
-                <p>La soledad y el aislamiento social en los adultos mayores se han convertido en un problema de salud pública mundial. Diversas investigaciones han demostrado que ambas condiciones tienen efectos físicos y psicológicos profundos, capaces de reducir la esperanza de vida y deteriorar la salud general. Estudios recientes muestran una relación directa entre la soledad y el aumento del riesgo de mortalidad. De hecho, se estima que el aislamiento social incrementa en un 26% el riesgo de muerte por cualquier causa, un impacto comparable al del tabaquismo o la obesidad. Según la Organización Mundial de la Salud, la soledad estuvo asociada a más de 871.000 muertes anuales en el mundo entre 2014 y 2019.</p>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #666; padding: 20px;">
+                No tienes robots asignados. Contacta al administrador.
+            </p>
+        {% endif %}
+    </div>
+    
+    <!-- Widget de Clima -->
+    <div class="weather-widget">
+        <h3><i class="fa-solid fa-cloud-sun"></i> Clima Actual</h3>
+        <div class="weather-content" id="weatherContent">
+            <div style="text-align: center; padding: 40px; width: 100%;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem;"></i>
+                <p style="margin-top: 10px; opacity: 0.8;">Cargando información del clima...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Noticias de Argentina -->
+    <div class="news-section">
+        <div class="news-header">
+            <h3><i class="fa-solid fa-newspaper"></i> Noticias de Argentina</h3>
+            <button class="news-refresh" onclick="loadNews()">
+                <i class="fa-solid fa-rotate-right"></i> Actualizar
+            </button>
+        </div>
+        <div class="news-container">
+            <div id="newsContent" class="news-loading">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.5rem;"></i>
+                <p style="margin-top: 15px; font-size: 1.1rem;">Cargando últimas noticias...</p>
             </div>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block body_js %}
+<script>
+    // Widget de Clima en Tiempo Real
+    async function loadWeather() {
+        const weatherContent = document.getElementById('weatherContent');
+        
+        try {
+            // Obtener ubicación del usuario
+            if (!navigator.geolocation) {
+                throw new Error('Geolocalización no soportada');
+            }
+            
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                // API gratuita de OpenWeatherMap (no requiere API key para pruebas)
+                // Para producción, registrarse en: https://openweathermap.org/api
+                const API_KEY = 'TU_API_KEY_AQUI'; // Dejar vacío usa el servicio de demo
+                const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=es&appid=${API_KEY || 'demo'}`;
+                
+                // Alternativamente, usar wttr.in que es completamente gratuito
+                const wttrUrl = `https://wttr.in/?format=j1`;
+                
+                try {
+                    const response = await fetch(wttrUrl);
+                    const data = await response.json();
+                    
+                    const current = data.current_condition[0];
+                    const location = data.nearest_area[0];
+                    
+                    // Mapear códigos de clima a iconos de Font Awesome
+                    const weatherIconMap = {
+                        '113': 'fa-sun',           // Soleado
+                        '116': 'fa-cloud-sun',     // Parcialmente nublado
+                        '119': 'fa-cloud',         // Nublado
+                        '122': 'fa-cloud',         // Muy nublado
+                        '143': 'fa-smog',          // Niebla
+                        '176': 'fa-cloud-rain',    // Lluvia ligera
+                        '296': 'fa-cloud-rain',    // Lluvia ligera
+                        '299': 'fa-cloud-showers-heavy', // Lluvia moderada
+                        '302': 'fa-cloud-showers-heavy', // Lluvia moderada
+                        '308': 'fa-cloud-showers-heavy', // Lluvia intensa
+                        '311': 'fa-snowflake',     // Nieve
+                        '314': 'fa-snowflake',     // Nieve
+                        '317': 'fa-snowflake',     // Nieve
+                        '320': 'fa-snowflake',     // Nieve
+                        '200': 'fa-bolt',          // Tormenta eléctrica
+                    };
+                    
+                    const weatherCode = current.weatherCode;
+                    const icon = weatherIconMap[weatherCode] || 'fa-cloud-sun';
+                    
+                    weatherContent.innerHTML = `
+                        <div class="weather-main">
+                            <i class="fa-solid ${icon} weather-icon"></i>
+                            <div class="weather-temp">${current.temp_C}°C</div>
+                            <div class="weather-description">${current.lang_es?.[0]?.value || current.weatherDesc[0].value}</div>
+                            <div class="weather-location">
+                                <i class="fa-solid fa-location-dot"></i>
+                                ${location.areaName[0].value}, ${location.country[0].value}
+                            </div>
+                        </div>
+                        <div class="weather-details">
+                            <div class="weather-detail-item">
+                                <i class="fa-solid fa-temperature-half"></i>
+                                <div>
+                                    <div class="weather-detail-label">Sensación Térmica</div>
+                                    <div class="weather-detail-value">${current.FeelsLikeC}°C</div>
+                                </div>
+                            </div>
+                            <div class="weather-detail-item">
+                                <i class="fa-solid fa-droplet"></i>
+                                <div>
+                                    <div class="weather-detail-label">Humedad</div>
+                                    <div class="weather-detail-value">${current.humidity}%</div>
+                                </div>
+                            </div>
+                            <div class="weather-detail-item">
+                                <i class="fa-solid fa-wind"></i>
+                                <div>
+                                    <div class="weather-detail-label">Viento</div>
+                                    <div class="weather-detail-value">${current.windspeedKmph} km/h</div>
+                                </div>
+                            </div>
+                            <div class="weather-detail-item">
+                                <i class="fa-solid fa-gauge"></i>
+                                <div>
+                                    <div class="weather-detail-label">Presión</div>
+                                    <div class="weather-detail-value">${current.pressure} mb</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error al cargar el clima:', error);
+                    weatherContent.innerHTML = `
+                        <div style="text-align: center; padding: 20px; width: 100%;">
+                            <i class="fa-solid fa-cloud-bolt" style="font-size: 2rem; opacity: 0.5;"></i>
+                            <p style="margin-top: 10px; opacity: 0.8;">No se pudo cargar la información del clima</p>
+                            <button onclick="loadWeather()" style="margin-top: 10px; padding: 8px 16px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; cursor: pointer;">
+                                <i class="fa-solid fa-rotate-right"></i> Reintentar
+                            </button>
+                        </div>
+                    `;
+                }
+            }, (error) => {
+                // Si no se permite la geolocalización, usar ubicación por defecto
+                console.log('Geolocalización no permitida, usando ubicación por defecto');
+                weatherContent.innerHTML = `
+                    <div style="text-align: center; padding: 20px; width: 100%;">
+                        <i class="fa-solid fa-location-crosshairs" style="font-size: 2rem; opacity: 0.5;"></i>
+                        <p style="margin-top: 10px; opacity: 0.8;">Activa la ubicación para ver el clima de tu zona</p>
+                    </div>
+                `;
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            weatherContent.innerHTML = `
+                <div style="text-align: center; padding: 20px; width: 100%;">
+                    <i class="fa-solid fa-triangle-exclamation" style="font-size: 2rem; opacity: 0.5;"></i>
+                    <p style="margin-top: 10px; opacity: 0.8;">Error al cargar el clima</p>
+                </div>
+            `;
+        }
+    }
+    
+    // Cargar clima al cargar la página
+    document.addEventListener('DOMContentLoaded', loadWeather);
+    
+    // Actualizar cada 30 minutos
+    setInterval(loadWeather, 30 * 60 * 1000);
+    
+    // ============================================
+    // Widget de Noticias de Argentina
+    // ============================================
+    async function loadNews() {
+        const newsContent = document.getElementById('newsContent');
+        newsContent.className = 'news-loading';
+        newsContent.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.5rem;"></i>
+            <p style="margin-top: 15px; font-size: 1.1rem;">Cargando últimas noticias...</p>
+        `;
+        
+        try {
+            // Usando NewsAPI - API gratuita de noticias
+            // Alternativa: https://newsapi.org/ (requiere registro gratuito)
+            // Para producción, registrarse en: https://newsapi.org/register
+            
+            // Opción 1: NewsAPI (comentado porque requiere API key)
+            // const API_KEY = 'TU_API_KEY_AQUI';
+            // const url = `https://newsapi.org/v2/top-headlines?country=ar&apiKey=${API_KEY}`;
+            
+            // Opción 2: GNews API (gratis, 100 requests/día)
+            // Registrarse en: https://gnews.io/
+            const GNEWS_API_KEY = 'TU_API_KEY_AQUI'; // Reemplazar con tu API key
+            const gnewsUrl = `https://gnews.io/api/v4/top-headlines?country=ar&lang=es&max=6&apikey=${GNEWS_API_KEY}`;
+            
+            // Opción 3: RSS Feed de noticias argentinas (sin API key necesaria)
+            // Usaremos un proxy CORS para evitar problemas
+            const rssUrl = 'https://api.rss2json.com/v1/api.json?rss_url=https://www.lanacion.com.ar/arc/outboundfeeds/rss/';
+            
+            const response = await fetch(rssUrl);
+            const data = await response.json();
+            
+            if (data.status !== 'ok') {
+                throw new Error('Error al cargar noticias');
+            }
+            
+            const articles = data.items.slice(0, 6); // Mostrar solo 6 noticias
+            
+            if (articles.length === 0) {
+                newsContent.className = 'news-error';
+                newsContent.innerHTML = `
+                    <i class="fa-solid fa-newspaper" style="font-size: 3rem; opacity: 0.3;"></i>
+                    <p style="margin-top: 15px;">No hay noticias disponibles en este momento</p>
+                `;
+                return;
+            }
+            
+            // Función para formatear la fecha
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                
+                if (diffHours < 1) return 'Hace unos minutos';
+                if (diffHours < 24) return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+                if (diffDays < 7) return `Hace ${diffDays} día${diffDays > 1 ? 's' : ''}`;
+                
+                return date.toLocaleDateString('es-AR', { 
+                    day: 'numeric', 
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+            }
+            
+            // Generar HTML de las noticias
+            const newsHTML = articles.map(article => {
+                const thumbnail = article.thumbnail || article.enclosure?.link || 'https://via.placeholder.com/400x200?text=Sin+Imagen';
+                const description = article.description?.replace(/<[^>]*>/g, '').substring(0, 150) || 'Sin descripción disponible';
+                const title = article.title || 'Sin título';
+                
+                return `
+                    <div class="news-card" onclick="window.open('${article.link}', '_blank')">
+                        <img src="${thumbnail}" alt="${title}" class="news-image" onerror="this.src='https://via.placeholder.com/400x200?text=Sin+Imagen'">
+                        <div class="news-content">
+                            <div class="news-source">
+                                <i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i>
+                                ${article.author || 'La Nación'}
+                            </div>
+                            <div class="news-title">${title}</div>
+                            <div class="news-description">${description}...</div>
+                            <div class="news-footer">
+                                <div class="news-date">
+                                    <i class="fa-regular fa-clock"></i>
+                                    ${formatDate(article.pubDate)}
+                                </div>
+                                <a href="${article.link}" target="_blank" class="news-link" onclick="event.stopPropagation()">
+                                    Leer más <i class="fa-solid fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            newsContent.className = 'news-grid';
+            newsContent.innerHTML = newsHTML;
+            
+        } catch (error) {
+            console.error('Error al cargar noticias:', error);
+            newsContent.className = 'news-error';
+            newsContent.innerHTML = `
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; opacity: 0.5;"></i>
+                <p style="margin-top: 15px; font-size: 1.1rem;">Error al cargar las noticias</p>
+                <button onclick="loadNews()" style="margin-top: 15px; padding: 10px 20px; background: #f5576c; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                    <i class="fa-solid fa-rotate-right"></i> Reintentar
+                </button>
+            `;
+        }
+    }
+    
+    // Cargar noticias al cargar la página
+    document.addEventListener('DOMContentLoaded', loadNews);
+    
+    // Actualizar cada 15 minutos
+    setInterval(loadNews, 15 * 60 * 1000);
+</script>
 {% endblock %}

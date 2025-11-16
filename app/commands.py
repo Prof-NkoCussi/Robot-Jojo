@@ -111,3 +111,51 @@ def create_robot_command(name, serial, username, mqtt_topic):
     click.echo(f"  - Propietario: {username}")
     click.echo(f"  - Tópico MQTT: {mqtt_topic}")
     click.echo(f"  - ID: {new_robot.id}")
+
+
+@click.command('seed-robots')
+def seed_robots_command():
+    """Crea robots de prueba en la base de datos."""
+    
+    ROBOTS = [
+        {
+            'name': 'JOJO',
+            'serial_number': 'JOJO-001',
+            'mqtt_topic': 'jojo/jojo',
+            'description': 'Robot asistente principal JOJO - Control maestro del sistema.'
+        },
+        {
+            'name': 'Carl',
+            'serial_number': 'CARL-001',
+            'mqtt_topic': 'jojo/carl',
+            'description': 'Robot asistente Carl.'
+        },
+        {
+            'name': 'Tina',
+            'serial_number': 'TINA-001',
+            'mqtt_topic': 'jojo/tina',
+            'description': 'Robot asistente Tina.'
+        }
+    ]
+    
+    click.echo("Creando robots de prueba...")
+    
+    for robot_data in ROBOTS:
+        robot = Robot.query.filter_by(serial_number=robot_data['serial_number']).first()
+        if not robot:
+            new_robot = Robot(
+                name=robot_data['name'],
+                serial_number=robot_data['serial_number'],
+                mqtt_topic=robot_data['mqtt_topic'],
+                description=robot_data['description'],
+                is_active=True,
+                is_online=False,
+                battery_level=100
+            )
+            db.session.add(new_robot)
+            click.echo(click.style(f"✓ Robot '{robot_data['name']}' creado.", fg='green'))
+        else:
+            click.echo(click.style(f"Robot '{robot_data['name']}' ya existe.", fg='yellow'))
+    
+    db.session.commit()
+    click.echo(click.style("Robots de prueba creados exitosamente.", fg='blue'))

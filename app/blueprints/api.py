@@ -23,8 +23,8 @@ def send_command(robot_id):
         # Obtener el robot
         robot = Robot.query.get_or_404(robot_id)
         
-        # Verificar que el robot pertenece al usuario
-        if robot.user_id != current_user.id:
+        # Verificar que el robot está en la lista de robots del usuario
+        if robot not in current_user.robots:
             return jsonify({'error': 'No autorizado'}), 403
         
         # Verificar que el robot esté activo
@@ -80,7 +80,7 @@ def get_robot_status(robot_id):
     try:
         robot = Robot.query.get_or_404(robot_id)
         
-        if robot.user_id != current_user.id:
+        if robot not in current_user.robots:
             return jsonify({'error': 'No autorizado'}), 403
         
         return jsonify({
