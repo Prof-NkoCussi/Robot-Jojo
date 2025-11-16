@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block head_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <div class="top-row">
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='img/LogodeAsisTECH.png') }}" alt="Logo AsisTECH">
+        </div>
+        <div class="actions-container">
+            <div class="action-btn"><i class="fa-solid fa-robot"></i><p>Buscar<br>mi Asistente</p></div>
+            <div class="action-btn"><i class="fa-solid fa-video"></i><p>Videollamada</p></div>
+            <div class="action-btn"><i class="fa-solid fa-house"></i><p>Hogar</p></div>
+            <div class="action-btn"><i class="fa-solid fa-phone"></i><p>Llamada</p></div>
+            <div class="action-btn"><i class="fa-solid fa-heart-pulse"></i><p>Estado</p></div>
+        </div>
+    </div>
+
+    <div class="bottom-row">
+        <div class="info-column">
+            <div class="card"><img src="{{ url_for('static', filename='img/AduMays.png') }}"><p>Aprende a cómo utilizar JoJo a su máximo potencial <a href="#" class="card-link">ver más...</a></p></div>
+            <div class="card"><img src="{{ url_for('static', filename='img/AduMays.png') }}"><p>Aprende a cómo utilizar JoJo a su máximo potencial <a href="#" class="card-link">ver más...</a></p></div>
+        </div>
+        <div class="tip-column">
+            <div class="card">
+                <div class="tip-content">
+                    <img src="{{ url_for('static', filename='img/AduMay.png') }}">
+                    <div>
+                        <h3>Sabias Qué</h3>
+                        <p>La soledad afecta profundamente a los adultos mayores, perjudicando su salud física y mental. Este sentimiento no deseado aumenta el riesgo de depresión, ansiedad y enfermedades cardiovasculares.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p>La soledad y el aislamiento social en los adultos mayores se han convertido en un problema de salud pública mundial. Diversas investigaciones han demostrado que ambas condiciones tienen efectos físicos y psicológicos profundos, capaces de reducir la esperanza de vida y deteriorar la salud general. Estudios recientes muestran una relación directa entre la soledad y el aumento del riesgo de mortalidad. De hecho, se estima que el aislamiento social incrementa en un 26% el riesgo de muerte por cualquier causa, un impacto comparable al del tabaquismo o la obesidad. Según la Organización Mundial de la Salud, la soledad estuvo asociada a más de 871.000 muertes anuales en el mundo entre 2014 y 2019.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

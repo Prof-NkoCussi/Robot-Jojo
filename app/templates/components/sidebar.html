@@ -1,0 +1,18 @@
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="{{ url_for('auth.logout') }}" title="Cerrar Sesión">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </a>
+        <!-- Este es el botón para cerrar en móvil -->
+        <i class="fa-solid fa-xmark close-btn" id="sidebar-close-btn"></i>
+    </div>
+    <nav class="sidebar-nav">
+        <ul>
+            <li><a href="{{ url_for('dashboard.index') }}"><span>Inicio</span><i class="fa-solid fa-arrow-right"></i></a></li>
+            <li><a href="#"><span>Mapeado</span><i class="fa-solid fa-map-location-dot"></i></a></li>
+            <li><a href="#"><span>Recordatorios</span><i class="fa-solid fa-bell"></i></a></li>
+            <li><a href="#"><span>Llamadas</span><i class="fa-solid fa-phone-volume"></i></a></li>
+            <li><a href="#"><span>Brazo</span><i class="fa-solid fa-robot"></i></a></li>
+        </ul>
+    </nav>
+</aside>

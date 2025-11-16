@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - JoJo AsisTECH</title>
+    
+    <!-- Iconos de FontAwesome -->
+    <script src="https://kit.fontawesome.com/8d348586f9.js" crossorigin="anonymous"></script>
+    
+    <!-- Estilos CSS cargados con url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/login.css') }}">
+    <style>
+        .flashes {
+            list-style-type: none;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .flashes .flash-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <main id="Login" class="main body">
+        <div class="container" id="container">
+          
+            <div class="form-container sign-in">
+                <!-- El action del formulario DEBE usar url_for -->
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <h1>Iniciar Sesión</h1>
+                    
+                    <!-- Bloque para mostrar mensajes flash de Flask -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <ul class="flashes">
+                            {% for category, message in messages %}
+                                <li class="flash-{{ category }}">{{ message }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endwith %}
+
+                    <div class="input-container">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" placeholder="Ingresar Usuario..." name="username" required>
+                    </div>
+                    <div class="input-container">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" placeholder="Ingresar Contraseña..." name="password" required>
+                    </div>
+                    <a href="#">¿Ha olvidado su contraseña?</a>
+                    <button type="submit">Iniciar Sesión</button>
+                </form>
+            </div>
+    
+            <div class="toggle-container">
+                <div class="toggle">
+                    <div class="toggle-panel toggle-right">
+                        <div>
+                            <!-- La imagen también DEBE usar url_for -->
+                            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo JoJo">
+                            <p>JoJo – Tu compañero inteligente del día a día.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>

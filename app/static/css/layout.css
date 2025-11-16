@@ -1,0 +1,81 @@
+/* proyojo/app/static/css/layout.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    overflow-x: hidden; /* Evita barras de scroll horizontales */
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 280px;
+    background-color: #00008B; /* Azul oscuro */
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1000;
+    transform: translateX(-100%); /* Oculto por defecto */
+    transition: transform 0.3s ease-in-out;
+}
+
+.main-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ocupa todo el ancho por defecto */
+    transition: padding-left 0.3s ease-in-out;
+}
+
+.navbar {
+    height: 70px;
+    background-color: #00008B; /* Azul oscuro */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.content-area {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+/* --- Componentes del Layout --- */
+.sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; }
+.sidebar-nav ul { list-style: none; padding-top: 1rem; }
+.sidebar-nav a { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); color: white; }
+.sidebar-nav a:hover { background: rgba(255, 255, 255, 0.2); }
+
+.navbar-left, .navbar-right { display: flex; align-items: center; gap: 1rem; }
+.navbar-title { font-size: 1.3rem; font-weight: 500; }
+.navbar i, .sidebar-header i { font-size: 1.5rem; cursor: pointer; color: white; }
+
+/* --- Lógica de Visibilidad del Sidebar --- */
+.sidebar.is-visible {
+    transform: translateX(0);
+}
+
+@media (min-width: 901px) {
+    body.sidebar-visible .main-container {
+        padding-left: 280px; /* Empuja el contenido SÓLO si el sidebar es visible */
+    }
+}
+@media (max-width: 900px) {
+    /* En móvil, el sidebar es un overlay y nunca empuja el contenido */
+    .main-container {
+        padding-left: 0 !important;
+    }
+}

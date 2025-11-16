@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Asistentes{% endblock %}
+
+{% block head_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/robot_select.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="select-container">
+    <header class="select-header">
+        <h1>Favoritos</h1>
+        <button class="edit-btn"><i class="fa-solid fa-pencil"></i> Editar</button>
+    </header>
+
+    <div class="robot-grid">
+        <!-- Iteramos sobre la lista de robots que nos pasó el backend -->
+        {% for robot in robots %}
+            <a href="{{ url_for('robot.control', robot_id=robot.id) }}" class="robot-card">
+                <div class="robot-icon"><i class="fa-solid fa-robot fa-2x"></i></div>
+                <span class="robot-name">{{ robot.name }}</span>
+                <div class="arrow-icon"><i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+        {% endfor %}
+
+        <!-- Tarjetas estáticas como en tu diseño -->
+        <div class="robot-card static-card">
+            <div class="robot-icon"><i class="fa-solid fa-location-dot fa-2x"></i></div>
+            <span class="robot-name">Ubicaciones</span>
+        </div>
+
+        <div class="robot-card add-card">
+            <i class="fa-solid fa-plus fa-3x"></i>
+        </div>
+    </div>
+</div>
+{% endblock %}

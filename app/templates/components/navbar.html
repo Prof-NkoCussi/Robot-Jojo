@@ -1,0 +1,15 @@
+<header class="navbar">
+    <div class="navbar-left">
+        <!-- El botón sándwich ahora tiene un ID -->
+        <i class="bi bi-list menu-toggle" id="menu-toggle-btn"></i>
+        <i class="bi bi-pencil"></i>
+        <h1 class="navbar-title">Robot del Nono</h1>
+        <i class="bi bi-bookmark-fill" style="color: #E2DB1C;"></i>
+    </div>
+    <div class="navbar-right">
+        {% if current_user.is_authenticated %}
+            <span>Hola, {{ current_user.username }}</span>
+        {% endif %}
+        <i class="bi bi-person-circle"></i>
+    </div>
+</header>

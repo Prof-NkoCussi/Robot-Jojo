@@ -1,0 +1,96 @@
+/* proyojo/app/static/css/robot_select.css */
+
+.content-area {
+    background-color: #C1D0FF; /* Fondo azul claro del diseño */
+    padding: 2rem;
+}
+
+.select-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.select-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.select-header h1 {
+    font-size: 2.5rem;
+    color: #1E1228;
+}
+
+.edit-btn {
+    background-color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.robot-grid {
+    display: grid;
+    /* Crea columnas que se ajustan automáticamente al tamaño */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.robot-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 150px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out;
+}
+
+.robot-card:hover {
+    transform: translateY(-5px);
+}
+
+.robot-icon {
+    margin-bottom: 1rem;
+}
+
+.robot-icon i {
+    color: #333;
+}
+
+.robot-name {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #1E1228;
+}
+
+.arrow-icon {
+    align-self: flex-end;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+}
+.arrow-icon i {
+    color: #333;
+}
+
+.add-card {
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    color: #adb5bd;
+    cursor: pointer;
+}
